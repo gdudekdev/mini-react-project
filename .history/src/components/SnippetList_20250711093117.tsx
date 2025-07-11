@@ -1,0 +1,25 @@
+import { useEffect, useState } from "react";
+import Snippet from "./Snippet";
+
+export default function SnippetList() {
+  const [snippets, setSnippets] = useState<any>([]);
+  useEffect(() => {
+    const saved = window.localStorage.getItem("snippets") ?? "";
+    if (saved != "") {
+      setSnippets(JSON.parse(saved));
+    }
+  }, []);
+  console.log(snippets);
+  return (
+    <div className=""></div>
+    <ul className="flex flex-col gap-6 mt-4">
+      {snippets.map((snippet, index) => {
+        return (
+          <li key={index}>
+            <Snippet snippet={snippet} />
+          </li>
+        );
+      })}
+    </ul>
+  );
+}
