@@ -1,7 +1,14 @@
 import { useSnippets } from "../context/useSnippets";
 import SyntaxHighlighter from "react-syntax-highlighter";
+import * as hljsStyles from "react-syntax-highlighter/dist/styles";
+import { useHighlight } from "../context/useHighlight";
+
 export default function Snippet({ snippet }: { snippet: any }) {
-  const { deleteSnippet, setIsChangeMode } = useSnippets();
+  const { deleteSnippet, setIsEditing } = useSnippets();
+  const { highlight } = useHighlight();
+
+  const selectedStyle = hljsStyles[highlight] || hljsStyles.atomOneDark;
+
   return (
     <div className="flex flex-col gap-2 bg-gray-900 text-gray-100">
       <div className="relative min-h-[60px] flex items-center justify-center">
@@ -16,12 +23,14 @@ export default function Snippet({ snippet }: { snippet: any }) {
         </div>
         <div
           className="bg-gray-700 absolute left-1 top-1/2 -translate-y-1/2 hover:cursor-pointer py-1 px-2 rounded-sm"
-          onClick={() => setIsChangeMode(snippet.id)}
+          onClick={() => setIsEditing(snippet.id)}
         >
           Modifier
         </div>
       </div>
-      <SyntaxHighlighter>{snippet.content}</SyntaxHighlighter>
+      <SyntaxHighlighter language={snippet.language} style={selectedStyle}>
+        {snippet.content}
+      </SyntaxHighlighter>
     </div>
   );
 }

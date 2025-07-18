@@ -12,8 +12,8 @@ export default function Form() {
     addSnippet,
     updateSnippet,
     getSnippetById,
-    isChangeMode,
-    setIsChangeMode,
+    isEditing,
+    setIsEditing,
   } = useSnippets();
 
   const textareaRef = useRef(null);
@@ -27,29 +27,33 @@ export default function Form() {
   }, [formData.content]);
 
   useEffect(() => {
-    if (isChangeMode) {
-      setFormData(getSnippetById(isChangeMode));
+    if (isEditing) {
+      setFormData(getSnippetById(isEditing));
     }
-  }, [isChangeMode]);
+  }, [isEditing]);
 
   const onSubmit = (e) => {
     e.preventDefault();
 
-    if (isChangeMode) {
+    if (isEditing) {
       updateSnippet(formData.id, formData);
     } else {
+      console.log("Snippet added");
       addSnippet(formData);
     }
-
     setFormData({ title: "", language: "", content: "" });
-    setIsChangeMode(0);
+    setIsEditing(0);
   };
-
+  const cancelUpdate = () => {
+    setFormData({
+      title: "",
+      language: "",
+      content: "",
+    });
+    setIsEditing(false);
+  };
   return (
-    <form
-      className="flex flex-col gap-4 w-[700px]"
-      onSubmit={onSubmit}
-    >
+    <form className="flex flex-col gap-4 w-[700px]" onSubmit={onSubmit}>
       <div className="flex flex-col gap-2">
         <label htmlFor="title">Titre</label>
         <input
@@ -96,13 +100,22 @@ export default function Form() {
         ></textarea>
       </div>
 
-      <div className="border rounded-sm p-2 hover:cursor-pointer">
+      <div className=" rounded-sm p-2 hover:cursor-pointer">
         <input
           type="submit"
-          value={isChangeMode ? "Modifier" : "Ajouter"}
+          value={isEditing ? "Modifier" : "Ajouter"}
           className="w-full bg-blue-500 text-white p-2 rounded hover:bg-blue-600 transition-colors cursor-pointer"
         />
       </div>
+      {isEditing && (
+        <div className="  rounded-sm p-2 hover:cursor-pointer ">
+          <input
+            defaultValue="Annuler"
+            className="w-full bg-gray-500 text-white p-2 rounded hover:bg-gray-700 transition-colors cursor-pointer text-center"
+            onClick={cancelUpdate}
+          />
+        </div>
+      )}
     </form>
   );
 }
